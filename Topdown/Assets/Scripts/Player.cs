@@ -6,24 +6,36 @@ using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(GunControl))]
-public class Player : MonoBehaviour
+[RequireComponent(typeof(ItemControl))]
+public class Player : MonoBehaviour, IDamageable
 {
 
     public float playerSpeed = 5; // 플레이어 이동 속도
     private Rigidbody rb; // 플레이어 리지드바디
     private GunControl gunControl;
 
+    public float health = 50;
+    private float maxHealth;
+
+    public event System.Action PlayerDead; // Enemy에게 Player가 죽었음을 알리기 위한 이벤트
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         gunControl = GetComponent<GunControl>();
+        maxHealth = health;
     }
 
     void FixedUpdate()
     {
-        // 플레이어 이동
-        Vector3 playerInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        rb.MovePosition(rb.position + playerInput.normalized * playerSpeed * Time.fixedDeltaTime);
+        // 플레이어 이동 (45도 기울어진 이동)
+        Vector3 playerInput = new(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+
+        var matrix = Matrix4x4.Rotate(Quaternion.Euler(0, 45, 0));
+        var newPlayerInput = matrix.MultiplyPoint3x4(playerInput);
+
+        rb.MovePosition(rb.position + playerSpeed * Time.fixedDeltaTime * newPlayerInput.normalized);
 
         // 마우스 방향 바라보기
         Vector3 mousePoint = GetLookAtPoint();
@@ -42,7 +54,7 @@ public class Player : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         // Ray와 충돌할 Plane 생성
-        Plane plane = new Plane(Vector3.up, Vector3.zero);
+        Plane plane = new(Vector3.up, Vector3.zero);
 
         float distance; // out 매개변수
         if (plane.Raycast(ray, out distance))
@@ -52,5 +64,25 @@ public class Player : MonoBehaviour
         }
 
         return Vector3.zero;
+    }
+
+    public void TakeHit(float damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        if (PlayerDead != null)
+        {
+            PlayerDead();
+        }
+
+        GameObject.Destroy(gameObject);
     }
 }

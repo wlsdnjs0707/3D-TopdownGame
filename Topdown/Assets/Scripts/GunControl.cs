@@ -11,10 +11,7 @@ public class GunControl : MonoBehaviour
 
     public void Start()
     {
-        if (testGun)
-        {
-            EquipGun(testGun);
-        }
+        
     }
 
     public void EquipGun(Gun gun)
@@ -35,6 +32,14 @@ public class GunControl : MonoBehaviour
         if (CurrentGun)
         {
             CurrentGun.Shoot();
+        }
+    }
+
+    public void TestGun()
+    {
+        if (testGun)
+        {
+            EquipGun(testGun);
         }
     }
 }

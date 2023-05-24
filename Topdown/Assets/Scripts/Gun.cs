@@ -16,7 +16,7 @@ public class Gun : MonoBehaviour
     {
         if (Time.time > nextShootTime)
         {
-            // shootCooldown만큼 기다린 뒤 다음 발사가 가능
+            // shootCooldown만큼 기다린 뒤 발사
             nextShootTime = Time.time + shootCooldown;
             Bullet newBullet = Instantiate(bullet, muzzle.position, muzzle.rotation) as Bullet;
             newBullet.SetSpeed(bulletSpeed);

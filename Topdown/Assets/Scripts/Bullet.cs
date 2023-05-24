@@ -8,13 +8,22 @@ public class Bullet : MonoBehaviour
     public float bulletDamage = 10;
     public LayerMask collisionMask;
 
+    public float bulletLifeTime = 2; // 총알이 사라지기까지의 시간
+
     public void SetSpeed(float newBulletSpeed)
     {
         bulletSpeed = newBulletSpeed;
     }
 
+    private void Start()
+    {
+        // 일정 시간 이후 오브젝트 제거
+        Destroy(gameObject, bulletLifeTime);
+    }
+
     void Update()
     {
+        // 총알 이동
         transform.Translate(bulletSpeed * Time.deltaTime * Vector3.forward);
     }
 

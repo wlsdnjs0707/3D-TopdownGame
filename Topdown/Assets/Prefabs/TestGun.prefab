@@ -146,7 +146,7 @@ MonoBehaviour:
   muzzle: {fileID: 6312207081200278197}
   bullet: {fileID: 2138184336435211486, guid: 2208ad692776511459497a5fc7aef149, type: 3}
   shootCooldown: 0.1
-  bulletSpeed: 10
+  bulletSpeed: 20
 --- !u!1 &6312207081200278198
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,7 +171,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6312207081200278198}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0, z: 0.75}
+  m_LocalPosition: {x: -0.25, y: 0, z: 0.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -5,13 +5,13 @@ using UnityEngine;
 public class GunControl : MonoBehaviour
 {
     public Transform gunHandle; // 총을 장착할 위치
-    private Gun CurrentGun; // 장착한 총
+    [HideInInspector] public Gun CurrentGun; // 장착한 총
 
     public Gun testGun;
 
     public void Start()
     {
-        
+        EquipTestGun();
     }
 
     public void EquipGun(Gun gun)
@@ -35,11 +35,25 @@ public class GunControl : MonoBehaviour
         }
     }
 
-    public void TestGun()
+    public void EquipTestGun()
     {
         if (testGun)
         {
             EquipGun(testGun);
+
+            CurrentGun.shootCooldown = 0.75f;
+            CurrentGun.bulletSpeed = 10.0f;
+            CurrentGun.bulletDamage = 10.0f;
         }
+    }
+
+    public void IncreaseDamage() // 총 데미지 증가
+    {
+        CurrentGun.bulletDamage += 5;
+    }
+
+    public void DecreaseShootCooldown() // 연사력 증가
+    {
+        CurrentGun.shootCooldown -= 0.1f; 
     }
 }

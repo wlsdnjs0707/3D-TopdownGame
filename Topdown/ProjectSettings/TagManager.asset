@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Enemy
   - StageController
+  - ShopPanel
+  - Money
   layers:
   - Default
   - TransparentFX

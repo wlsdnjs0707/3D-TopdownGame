@@ -2,28 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(GunControl))]
-[RequireComponent(typeof(ItemControl))]
 public class Player : MonoBehaviour, IDamageable
 {
-
-    public float playerSpeed = 5; // 플레이어 이동 속도
     private Rigidbody rb; // 플레이어 리지드바디
     private GunControl gunControl;
 
-    public float health = 50;
-    private float maxHealth;
+    [HideInInspector] public float playerSpeed = 4; // 플레이어 이동 속도
+    [HideInInspector] public float health = 50;
+    [HideInInspector] public float maxHealth;
+    [HideInInspector] public int money = 0;
 
-    public event System.Action PlayerDead; // Enemy에게 Player가 죽었음을 알리기 위한 이벤트
+    public Transform canvas; // UI (캔버스)
+    private Slider healthBar; // 체력바 (슬라이더)
+    private Camera cam; // 메인 카메라
+
+    public event System.Action PlayerDead; // Player 가 죽었을 때 이벤트
+    public event System.Action PlayerHit; // Player 가 데미지를 입었을 때 이벤트
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         gunControl = GetComponent<GunControl>();
+        healthBar = canvas.GetComponentInChildren<Slider>();
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+
         maxHealth = health;
     }
 
@@ -48,12 +56,18 @@ public class Player : MonoBehaviour, IDamageable
         }
     }
 
-    private Vector3 GetLookAtPoint() // transform이 LookAt할 좌표를 구하는 함수
+    void Update()
     {
-        // 카메라에서 마우스 위치로 Ray를 쏴 바닥과 만나는 곳을 구한다.
+        // 체력바가 항상 카메라를 향하게
+        canvas.transform.LookAt(transform.position + cam.transform.rotation * Vector3.forward, cam.transform.rotation * Vector3.up);
+    }
+
+    private Vector3 GetLookAtPoint() // transform 이 LookAt 할 좌표를 구하는 함수
+    {
+        // 카메라에서 마우스 위치로 Ray 를 쏴 바닥과 만나는 곳을 구한다.
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        // Ray와 충돌할 Plane 생성
+        // Ray 와 충돌할 Plane 생성
         Plane plane = new(Vector3.up, Vector3.zero);
 
         float distance; // out 매개변수
@@ -70,6 +84,10 @@ public class Player : MonoBehaviour, IDamageable
     {
         health -= damage;
 
+        healthBar.value = health / maxHealth;
+
+        PlayerHit?.Invoke(); // 대리자 호출 간소화
+
         if (health <= 0)
         {
             Die();
@@ -78,10 +96,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        if (PlayerDead != null)
-        {
-            PlayerDead();
-        }
+        PlayerDead?.Invoke(); // 대리자 호출 간소화
 
         GameObject.Destroy(gameObject);
     }

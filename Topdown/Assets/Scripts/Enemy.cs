@@ -1,15 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour, IDamageable
 {
-    private NavMeshAgent navMeshAgent; // NavMeshAgent 컴포넌트
-    private GameObject target; // 추적할 플레이어
-    
+    [HideInInspector] public NavMeshAgent navMeshAgent; // NavMeshAgent 컴포넌트
+    public Transform canvas; // UI (캔버스)
+    private Slider healthBar; // 체력바 (슬라이더)
+    private GameObject target; // 추적할 플레이어 오브젝트
+    private Camera cam; // 메인 카메라
+
+    public GameObject money;
+
     public enum State {Idle, Track, Attack}; // 캐릭터의 상태를 enum 타입으로 선언
     State currentState;
 
@@ -28,12 +36,17 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private float collistionDistance;
 
-    public event System.Action EnemyDead; // StageController에게 Enemy가 죽었음을 알리기 위한 이벤트
+    public event System.Action EnemyDead; // Enemy 가 죽었음을 알리기 위한 이벤트
 
     void Start()
     {
         maxHealth = health;
         navMeshAgent = GetComponent<NavMeshAgent>();
+
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+
+        healthBar = canvas.GetComponentInChildren<Slider>();
+
         target = GameObject.FindGameObjectWithTag("Player");
         target.GetComponent<Player>().PlayerDead += OnPlayerDead;
         collistionDistance = GetComponent<CapsuleCollider>().radius + target.GetComponent<CapsuleCollider>().radius;
@@ -46,6 +59,9 @@ public class Enemy : MonoBehaviour, IDamageable
 
     void Update()
     {
+        // 체력바가 항상 카메라를 향하게
+        canvas.transform.LookAt(transform.position + cam.transform.rotation * Vector3.forward, cam.transform.rotation * Vector3.up);
+
         // 공격 쿨다운이 끝났는지, 공격 사거리 안에 들어왔는지 체크 (제곱근 연산이 필요한 Distance 함수 대신 제곱한 값을 사용)
         if (!isPlayerDead && Time.time > nextAttackTime)
         {
@@ -70,7 +86,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
         bool isAttack = false;
 
-        while (percent <= 1)
+        while (!isPlayerDead && percent <= 1)
         {
             percent += Time.deltaTime * attackSpeed;
 
@@ -115,6 +131,8 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         health -= damage;
 
+        healthBar.value = health / maxHealth;
+
         if (health <= 0 && !isDead)
         {
             Die();
@@ -125,10 +143,9 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         isDead = true;
 
-        if (EnemyDead != null)
-        {
-            EnemyDead();
-        }
+        EnemyDead?.Invoke(); // 대리자 호출 간소화
+
+        Instantiate(money, new Vector3(transform.position.x, transform.position.y + 2, transform.position.z), Quaternion.identity); // Money 생성
 
         GameObject.Destroy(gameObject);
     }

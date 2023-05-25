@@ -7,8 +7,9 @@ public class Gun : MonoBehaviour
 {
     public Transform muzzle;
     public Bullet bullet;
-    public float shootCooldown = 100;
-    public float bulletSpeed = 10;
+    [HideInInspector] public float shootCooldown = 0.0f;
+    [HideInInspector] public float bulletSpeed = 0.0f;
+    [HideInInspector] public float bulletDamage = 0.0f;
 
     private float nextShootTime; // 다음 발사가 가능한 시간
 
@@ -20,6 +21,7 @@ public class Gun : MonoBehaviour
             nextShootTime = Time.time + shootCooldown;
             Bullet newBullet = Instantiate(bullet, muzzle.position, muzzle.rotation) as Bullet;
             newBullet.SetSpeed(bulletSpeed);
+            newBullet.SetDamage(bulletDamage);
         }
 
     }

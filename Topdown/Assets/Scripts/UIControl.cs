@@ -26,6 +26,10 @@ public class UIControl : MonoBehaviour
     public TMP_Text damageText;
     public TMP_Text rpmText;
 
+    [Header("Reinforce Text")]
+    public TMP_Text damageMoneyText;
+    public TMP_Text rpmMoneyText;
+
     [Header("Weapon Sprite")]
     public Sprite[] sprites;
 
@@ -35,7 +39,6 @@ public class UIControl : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<ItemControl>().SelectFinished += StartStage;
         player.GetComponent<ItemControl>().Reinforced += UpdateGunStat;
-        player.GetComponent<Player>().PlayerHit += OnPlayerHit;
 
         stageController = GameObject.FindGameObjectWithTag("StageController");
         stageController.GetComponent<StageControl>().StageEnd += EndStage;
@@ -49,20 +52,14 @@ public class UIControl : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (player != null)
-        {
-            OnPlayerGetMoney(); // 지금은 매 프레임 수행, 나중에 돈 주웠을때, 썼을때만 호출
-        }
-        
+        moneyText.text = player.GetComponent<Player>().money.ToString();
+        currentHealthText.text = player.GetComponent<Player>().health.ToString();
     }
 
     void FirstUpdate() // 텍스트 초기화
     {
-        OnPlayerHit();
-        OnPlayerGetMoney();
         UpdateGunStat();
     }
 
@@ -117,19 +114,12 @@ public class UIControl : MonoBehaviour
         shopPanel.SetActive(false);
     }
 
-    void OnPlayerHit()
-    {
-        currentHealthText.text = player.GetComponent<Player>().health.ToString();
-    }
-
-    void OnPlayerGetMoney()
-    {
-        moneyText.text = player.GetComponent<Player>().money.ToString();
-    }
-
     void UpdateGunStat()
     {
         damageText.text = player.GetComponent<GunControl>().CurrentGun.bulletDamage.ToString();
         rpmText.text = Mathf.Round((60 / player.GetComponent<GunControl>().CurrentGun.shootCooldown)).ToString();
+
+        damageMoneyText.text = string.Format($"${player.GetComponent<ItemControl>().damageMoney}");
+        rpmMoneyText.text = string.Format($"${player.GetComponent<ItemControl>().rpmMoney}");
     }
 }

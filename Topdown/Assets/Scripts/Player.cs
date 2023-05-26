@@ -22,8 +22,6 @@ public class Player : MonoBehaviour, IDamageable
     private Camera cam; // 메인 카메라
 
     public event System.Action PlayerDead; // Player 가 죽었을 때 이벤트
-    public event System.Action PlayerHit; // Player 가 데미지를 입었을 때 이벤트
-
 
     void Start()
     {
@@ -60,6 +58,9 @@ public class Player : MonoBehaviour, IDamageable
     {
         // 체력바가 항상 카메라를 향하게
         canvas.transform.LookAt(transform.position + cam.transform.rotation * Vector3.forward, cam.transform.rotation * Vector3.up);
+
+        // 체력바 업데이트
+        healthBar.value = health / maxHealth;
     }
 
     private Vector3 GetLookAtPoint() // transform 이 LookAt 할 좌표를 구하는 함수
@@ -83,10 +84,6 @@ public class Player : MonoBehaviour, IDamageable
     public void TakeHit(float damage)
     {
         health -= damage;
-
-        healthBar.value = health / maxHealth;
-
-        PlayerHit?.Invoke(); // 대리자 호출 간소화
 
         if (health <= 0)
         {

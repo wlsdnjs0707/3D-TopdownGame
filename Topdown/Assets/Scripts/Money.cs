@@ -15,7 +15,7 @@ public class Money : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            player.GetComponent<Player>().money += 100;
+            player.GetComponent<Player>().money += 50;
 
             GameObject.Destroy(gameObject);
         }

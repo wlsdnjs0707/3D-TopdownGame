@@ -117,6 +117,7 @@ MonoBehaviour:
   navMeshAgent: {fileID: 0}
   canvas: {fileID: 6724802543982826533}
   money: {fileID: 6997468285816340583, guid: 45a940829942fc64cba81ead6b043976, type: 3}
+  healpack: {fileID: 4016115461800625586, guid: 6048263dd9e9d924baf688f211354cad, type: 3}
   health: 50
   attackRange: 0.5
   attackCooldown: 1

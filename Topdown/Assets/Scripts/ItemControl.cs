@@ -10,6 +10,9 @@ public class ItemControl : MonoBehaviour
 
     private GunControl gc;
 
+    [HideInInspector] public int damageMoney = 100;
+    [HideInInspector] public int rpmMoney = 100;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,11 +26,12 @@ public class ItemControl : MonoBehaviour
 
     public void DamageReinforce() // 데미지 증가
     {
-        if (gameObject.GetComponent<Player>().money >= 100)
+        if (gameObject.GetComponent<Player>().money >= damageMoney)
         {
             gc.IncreaseDamage();
 
-            gameObject.GetComponent<Player>().money -= 100;
+            gameObject.GetComponent<Player>().money -= damageMoney;
+            damageMoney *= 2;
 
             Reinforced?.Invoke(); // 대리자 호출 간소화
         }
@@ -35,11 +39,12 @@ public class ItemControl : MonoBehaviour
 
     public void RPMReinforce() // 연사력 증가
     {
-        if (gameObject.GetComponent<Player>().money >= 100)
+        if (gameObject.GetComponent<Player>().money >= rpmMoney)
         {
             gc.DecreaseShootCooldown();
 
-            gameObject.GetComponent<Player>().money -= 100;
+            gameObject.GetComponent<Player>().money -= rpmMoney;
+            rpmMoney *= 2;
 
             Reinforced?.Invoke(); // 대리자 호출 간소화
         }

@@ -17,6 +17,7 @@ public class Enemy : MonoBehaviour, IDamageable
     private Camera cam; // 메인 카메라
 
     public GameObject money;
+    public GameObject healpack;
 
     public enum State {Idle, Track, Attack}; // 캐릭터의 상태를 enum 타입으로 선언
     State currentState;
@@ -143,11 +144,28 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         isDead = true;
 
+        Instantiate(money, new Vector3(transform.position.x, 3, transform.position.z), Quaternion.identity); // Money 생성
+
+        if (GetRandom(10))
+        {
+            Instantiate(healpack, new Vector3(transform.position.x, 3, transform.position.z), Quaternion.identity);
+        }
+
         EnemyDead?.Invoke(); // 대리자 호출 간소화
 
-        Instantiate(money, new Vector3(transform.position.x, transform.position.y + 2, transform.position.z), Quaternion.identity); // Money 생성
-
         GameObject.Destroy(gameObject);
+    }
+
+    bool GetRandom(int percent)
+    {
+        if (Random.Range(0, 100)+1 <= percent)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     void OnPlayerDead()

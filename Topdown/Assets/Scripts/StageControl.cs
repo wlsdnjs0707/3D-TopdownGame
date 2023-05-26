@@ -8,14 +8,15 @@ public class StageControl : MonoBehaviour
     [System.Serializable]
     public class Stage
     {
-        public int totalEnemyCount;
+        public int enemyCount;
         public float spawnCooldown;
     }
 
     public enum State { Play, Stop }; // 현재 스테이지 상태
     State currentState;
 
-    public Transform spawnPoint; // 스폰 위치
+    [Header("Spawn Point")]
+    public Transform[] spawnPoints; // 스폰 위치
 
     public Stage[] stages;
     public Enemy enemy;
@@ -54,9 +55,13 @@ public class StageControl : MonoBehaviour
                 nextSpawnTime = Time.time + stages[currentStage - 1].spawnCooldown;
 
                 // Enemy 생성
-                Enemy currentEnemy = Instantiate(enemy, spawnPoint.position, Quaternion.identity) as Enemy;
-                currentEnemy.EnemyDead += OnEnemyDead; // Enemy Dead 이벤트 등록
-                currentEnemy.GetComponent<NavMeshAgent>().speed = enemySpeed + (currentStage * 0.5f); // 스테이지마다 Enemy 속도 빨라짐
+                for (int i=0; i<spawnPoints.Length; i++)
+                {
+                    int index = i;
+                    Enemy currentEnemy = Instantiate(enemy, spawnPoints[index].position, Quaternion.identity) as Enemy;
+                    currentEnemy.EnemyDead += OnEnemyDead; // Enemy Dead 이벤트 등록
+                    currentEnemy.GetComponent<NavMeshAgent>().speed = enemySpeed + (currentStage * 0.5f); // 스테이지마다 Enemy 속도 빨라짐
+                }
             }
         }
         
@@ -76,8 +81,8 @@ public class StageControl : MonoBehaviour
 
         if (currentStage - 1 < stages.Length)
         {
-            enemyCountLeftToSpawn = stages[currentStage - 1].totalEnemyCount;
-            currentEnemyCount = enemyCountLeftToSpawn;
+            enemyCountLeftToSpawn = stages[currentStage - 1].enemyCount;
+            currentEnemyCount = enemyCountLeftToSpawn * 3;
         }
     }
 

@@ -16,6 +16,7 @@ public class Player : MonoBehaviour, IDamageable
     [HideInInspector] public float health = 50;
     [HideInInspector] public float maxHealth;
     [HideInInspector] public int money = 0;
+    [HideInInspector] public int score = 0;
 
     public Transform canvas; // UI (캔버스)
     private Slider healthBar; // 체력바 (슬라이더)
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour, IDamageable
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 
         maxHealth = health;
+        score = 0;
     }
 
     void FixedUpdate()
@@ -94,6 +96,8 @@ public class Player : MonoBehaviour, IDamageable
     private void Die()
     {
         PlayerDead?.Invoke(); // 대리자 호출 간소화
+
+        Time.timeScale = 0.0f;
 
         GameObject.Destroy(gameObject);
     }

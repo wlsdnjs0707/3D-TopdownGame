@@ -14,7 +14,6 @@ public class MainUI : MonoBehaviour
 
     [Header("Text")]
     public TMP_Text nameText;
-    public TMP_Text crystalText;
 
     void Start()
     {
@@ -31,7 +30,7 @@ public class MainUI : MonoBehaviour
 
     void Update()
     {
-        crystalText.text = GameManager.Instance.playerData.crystal.ToString();
+
     }
 
     public void PressPlay()

@@ -6,8 +6,7 @@ using System.IO;
 public class PlayerData
 {
     public string name = "AAA";
-    public int crystal = 1000;
-    public int[] itemArray = new int[] { 1, 0, 0 };
+    public int highScore = 0;
 }
 
 public class GameManager : MonoBehaviour

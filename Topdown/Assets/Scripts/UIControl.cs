@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIControl : MonoBehaviour
@@ -12,6 +13,7 @@ public class UIControl : MonoBehaviour
     [Header("Panel")]
     public GameObject shopPanel;
     public GameObject startPanel;
+    public GameObject endPanel;
 
     [Header("Weapon Image")]
     public Image weaponImage;
@@ -21,6 +23,11 @@ public class UIControl : MonoBehaviour
     public TMP_Text stageText_2; // 중앙 UI
     public TMP_Text currentHealthText;
     public TMP_Text moneyText;
+    public TMP_Text scoreText;
+
+    [Header("Player Stat Text")]
+    public TMP_Text maxHealthText;
+    public TMP_Text playerSpeedText;
 
     [Header("Gun State Text")]
     public TMP_Text damageText;
@@ -39,34 +46,44 @@ public class UIControl : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<ItemControl>().SelectFinished += StartStage;
         player.GetComponent<ItemControl>().Reinforced += UpdateGunStat;
+        player.GetComponent<Player>().PlayerDead += GameEnd;
 
         stageController = GameObject.FindGameObjectWithTag("StageController");
         stageController.GetComponent<StageControl>().StageEnd += EndStage;
 
-        startPanel.GetComponent<CanvasGroup>().alpha = 0.0f;
         startPanel.SetActive(false);
+        endPanel.SetActive(false);
 
         FirstUpdate();
         TurnOffUI();
         StartCoroutine(InformStage());
-
     }
 
     private void Update()
     {
-        moneyText.text = player.GetComponent<Player>().money.ToString();
-        currentHealthText.text = player.GetComponent<Player>().health.ToString();
+        if (player != null)
+        {
+            moneyText.text = player.GetComponent<Player>().money.ToString();
+            currentHealthText.text = player.GetComponent<Player>().health.ToString();
+            maxHealthText.text = player.GetComponent<Player>().maxHealth.ToString();
+            playerSpeedText.text = player.GetComponent<Player>().playerSpeed.ToString();
+        }
+        else
+        {
+            currentHealthText.text = string.Format("0");
+        }
     }
 
     void FirstUpdate() // 텍스트 초기화
     {
         UpdateGunStat();
+        stageText_1.text = string.Format($"스테이지 {stageController.GetComponent<StageControl>().currentStage}");
     }
 
     void StartStage()
     {
         TurnOffUI();
-        stageText_1.text = stageController.GetComponent<StageControl>().currentStage.ToString();
+        stageText_1.text = string.Format($"스테이지 {stageController.GetComponent<StageControl>().currentStage}");
 
         StartCoroutine(InformStage());
 
@@ -121,5 +138,28 @@ public class UIControl : MonoBehaviour
 
         damageMoneyText.text = string.Format($"${player.GetComponent<ItemControl>().damageMoney}");
         rpmMoneyText.text = string.Format($"${player.GetComponent<ItemControl>().rpmMoney}");
+    }
+
+    void GameEnd()
+    {
+        scoreText.text = string.Format($"점수 : {player.GetComponent<Player>().score}");
+
+        if (player.GetComponent<Player>().score > GameManager.Instance.playerData.highScore)
+        {
+            GameManager.Instance.playerData.highScore = player.GetComponent<Player>().score;
+        }
+        GameManager.Instance.SaveData();
+
+        endPanel.SetActive(true);
+    }
+
+    public void GoToMain()
+    {
+        SceneManager.LoadScene("Main");
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene("Play");
     }
 }

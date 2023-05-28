@@ -26,13 +26,14 @@ public class Enemy : MonoBehaviour, IDamageable
     private float maxHealth;
 
     public float attackRange = 0.5f;
-    public float attackCooldown = 1;
-    public float attackSpeed = 1;
+    public float attackCooldown = 2;
+    public float attackSpeed = 1.5f;
     private float nextAttackTime;
 
     public float damage = 10;
 
     private bool isDead = false;
+    private bool isAttack = false;
     private bool isPlayerDead = false;
 
     private float collistionDistance;
@@ -84,8 +85,7 @@ public class Enemy : MonoBehaviour, IDamageable
         Vector3 targetPosition = target.transform.position - targetDirection * target.GetComponent<CapsuleCollider>().radius;
 
         float percent = 0;
-
-        bool isAttack = false;
+        isAttack = false;
 
         while (!isPlayerDead && percent <= 1)
         {
@@ -94,7 +94,6 @@ public class Enemy : MonoBehaviour, IDamageable
             if (percent >= 0.5f && !isAttack)
             {
                 isAttack = true;
-                target.GetComponent<Player>().TakeHit(damage);
             }
 
             float interpolation = (-Mathf.Pow(percent, 2) + percent) * 4;
@@ -128,6 +127,15 @@ public class Enemy : MonoBehaviour, IDamageable
             yield return new WaitForSeconds(updateCooldown);
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isAttack && other.gameObject.CompareTag("Player"))
+        {
+            target.GetComponent<Player>().TakeHit(damage);
+        }
+    }
+
     public void TakeHit(float damage)
     {
         health -= damage;
@@ -145,6 +153,8 @@ public class Enemy : MonoBehaviour, IDamageable
         isDead = true;
 
         Instantiate(money, new Vector3(transform.position.x, 3, transform.position.z), Quaternion.identity); // Money 생성
+
+        target.GetComponent<Player>().score += 100;
 
         if (GetRandom(10))
         {

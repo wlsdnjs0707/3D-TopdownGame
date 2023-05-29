@@ -8,18 +8,20 @@ using UnityEngine.SceneManagement;
 public class MainUI : MonoBehaviour
 {
     [Header("Panel")]
-    public GameObject statePanel;
     public GameObject buttonPanel;
     public GameObject namePanel;
+    public GameObject rankPanel;
 
     [Header("Text")]
     public TMP_Text nameText;
+    public TMP_Text highScoreText;
 
     void Start()
     {
+        rankPanel.SetActive(false);
+
         if (!File.Exists(Application.persistentDataPath + "/PlayerData"))
         {
-            statePanel.SetActive(false);
             buttonPanel.SetActive(false);
         }
         else
@@ -28,14 +30,17 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-
-    }
-
     public void PressPlay()
     {
         SceneManager.LoadScene("Play");
+    }
+
+    public void PressRank()
+    {
+        highScoreText.text = string.Format($"{GameManager.Instance.playerData.name} : {GameManager.Instance.playerData.highScore}");
+
+        buttonPanel.SetActive(false);
+        rankPanel.SetActive(true);
     }
 
     public void PressSetName()
@@ -45,7 +50,12 @@ public class MainUI : MonoBehaviour
         GameManager.Instance.SaveData();
 
         namePanel.SetActive(false);
-        statePanel.SetActive(true);
+        buttonPanel.SetActive(true);
+    }
+
+    public void PressMain()
+    {
+        rankPanel.SetActive(false);
         buttonPanel.SetActive(true);
     }
 }

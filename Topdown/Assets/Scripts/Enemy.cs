@@ -25,9 +25,9 @@ public class Enemy : MonoBehaviour, IDamageable
     public float health = 50;
     private float maxHealth;
 
-    public float attackRange = 0.5f;
-    public float attackCooldown = 2;
-    public float attackSpeed = 1.5f;
+    private float attackRange = 0.75f;
+    private float attackCooldown = 2.0f;
+    private float attackSpeed = 2.0f;
     private float nextAttackTime;
 
     public float damage = 10;
@@ -94,6 +94,7 @@ public class Enemy : MonoBehaviour, IDamageable
             if (percent >= 0.5f && !isAttack)
             {
                 isAttack = true;
+                target.GetComponent<Player>().TakeHit(damage);
             }
 
             float interpolation = (-Mathf.Pow(percent, 2) + percent) * 4;
@@ -117,7 +118,7 @@ public class Enemy : MonoBehaviour, IDamageable
             if (currentState == State.Track)
             {
                 Vector3 targetDirection = (target.transform.position - transform.position).normalized;
-                Vector3 targetPosition = target.transform.position - targetDirection * (collistionDistance + attackRange / 2);
+                Vector3 targetPosition = target.transform.position - targetDirection;
 
                 if (!isDead)
                 {
@@ -125,14 +126,6 @@ public class Enemy : MonoBehaviour, IDamageable
                 }
             }
             yield return new WaitForSeconds(updateCooldown);
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!isAttack && other.gameObject.CompareTag("Player"))
-        {
-            target.GetComponent<Player>().TakeHit(damage);
         }
     }
 

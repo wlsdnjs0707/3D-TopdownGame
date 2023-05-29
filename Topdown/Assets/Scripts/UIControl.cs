@@ -24,6 +24,7 @@ public class UIControl : MonoBehaviour
     public TMP_Text currentHealthText;
     public TMP_Text moneyText;
     public TMP_Text scoreText;
+    public TMP_Text ammoText;
 
     [Header("Player Stat Text")]
     public TMP_Text maxHealthText;
@@ -67,6 +68,7 @@ public class UIControl : MonoBehaviour
             currentHealthText.text = player.GetComponent<Player>().health.ToString();
             maxHealthText.text = player.GetComponent<Player>().maxHealth.ToString();
             playerSpeedText.text = player.GetComponent<Player>().playerSpeed.ToString();
+            ammoText.text = string.Format($"{player.GetComponent<GunControl>().CurrentGun.currentAmmo} / {player.GetComponent<GunControl>().CurrentGun.maxAmmo}");
         }
         else
         {
@@ -140,7 +142,7 @@ public class UIControl : MonoBehaviour
         rpmMoneyText.text = string.Format($"${player.GetComponent<ItemControl>().rpmMoney}");
     }
 
-    void GameEnd()
+    public void GameEnd()
     {
         scoreText.text = string.Format($"점수 : {player.GetComponent<Player>().score}");
 

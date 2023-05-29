@@ -18,8 +18,10 @@ public class StageControl : MonoBehaviour
     [Header("Spawn Point")]
     public Transform[] spawnPoints; // 스폰 위치
 
-    public Stage[] stages;
+    private Stage[] stages;
     public Enemy enemy;
+
+    public int maxStage;
 
     [HideInInspector] public int currentStage = 0;
     private int enemyCountLeftToSpawn = 0;
@@ -29,13 +31,22 @@ public class StageControl : MonoBehaviour
     private float enemySpeed = 1.0f;
 
     private GameObject player; // 플레이어
-    public GameObject directionalLight; // 라이트
 
     public event System.Action StageEnd; // UI Controller 에게 스테이지가 끝났음을 알림
 
     // Start is called before the first frame update
     void Start()
     {
+        stages = new Stage[maxStage];
+
+        for (int i = 0; i < maxStage; i++)
+        {
+            int index = i;
+            stages[index] = new Stage();
+            stages[index].enemyCount = 1 + Mathf.FloorToInt(index/3);
+            stages[index].spawnCooldown = 2;
+        }
+
         player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<ItemControl>().SelectFinished += StartStage;
 
@@ -105,10 +116,10 @@ public class StageControl : MonoBehaviour
 
         if (currentEnemyCount == 0)
         {
-            if (currentStage == stages.Length) // 모든 스테이지 클리어
+            if (currentStage == maxStage) // 모든 스테이지 클리어
             {
-                UnityEditor.EditorApplication.isPlaying = false; // 에디터에서
-                //Application.Quit(); // 어플리케이션에서
+                Time.timeScale = 0.0f;
+                GameObject.FindGameObjectWithTag("UIManager").GetComponent<UIControl>().GameEnd();
             }
             else
             {

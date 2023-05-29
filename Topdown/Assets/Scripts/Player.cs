@@ -17,6 +17,7 @@ public class Player : MonoBehaviour, IDamageable
     [HideInInspector] public float maxHealth;
     [HideInInspector] public int money = 0;
     [HideInInspector] public int score = 0;
+    [HideInInspector] public bool isReloading = false;
 
     public Transform canvas; // UI (캔버스)
     private Slider healthBar; // 체력바 (슬라이더)
@@ -49,8 +50,8 @@ public class Player : MonoBehaviour, IDamageable
         Vector3 mousePoint = GetLookAtPoint();
         transform.LookAt(new Vector3(mousePoint.x, transform.position.y, mousePoint.z));
 
-        // 총 장착
-        if (Input.GetMouseButton(0))
+        // 발사
+        if (!isReloading && Input.GetMouseButton(0))
         {
             gunControl.Shoot();
         }
@@ -63,6 +64,12 @@ public class Player : MonoBehaviour, IDamageable
 
         // 체력바 업데이트
         healthBar.value = health / maxHealth;
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            isReloading = true;
+            gunControl.Reload();
+        }
     }
 
     private Vector3 GetLookAtPoint() // transform 이 LookAt 할 좌표를 구하는 함수

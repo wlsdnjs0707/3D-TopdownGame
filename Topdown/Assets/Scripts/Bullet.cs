@@ -5,10 +5,9 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     private float bulletSpeed = 10;
-    private float bulletDamage = 10;
-    public LayerMask collisionMask;
+    protected float bulletDamage = 10;
 
-    public float bulletLifeTime = 2; // 총알이 사라지기까지의 시간
+    private float bulletLifeTime = 2; // 총알이 사라지기까지의 시간
 
     public void SetSpeed(float newBulletSpeed)
     {

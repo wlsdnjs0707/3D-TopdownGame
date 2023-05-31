@@ -10,11 +10,7 @@ public class GunControl : MonoBehaviour
     public Gun testGun;
     public Gun assaultRifle;
     public Gun sniperRifle;
-
-    public void Start()
-    {
-        SniperRifle();
-    }
+    public Gun shotGun;
 
     public void EquipGun(Gun gun)
     {
@@ -31,7 +27,11 @@ public class GunControl : MonoBehaviour
 
     public void Shoot()
     {
-        if (CurrentGun)
+        if (CurrentGun.gunName.Equals("Shotgun"))
+        {
+            CurrentGun.ShotgunShoot();
+        }
+        else
         {
             CurrentGun.Shoot();
         }
@@ -39,9 +39,13 @@ public class GunControl : MonoBehaviour
 
     public void Reload()
     {
-        if (CurrentGun)
+        if (CurrentGun.gunName.Equals("Shotgun"))
         {
-            CurrentGun.Reload();
+            CurrentGun.Reload(true);
+        }
+        else
+        {
+            CurrentGun.Reload(false);
         }
     }
 
@@ -71,7 +75,7 @@ public class GunControl : MonoBehaviour
             CurrentGun.bulletSpeed = 20.0f;
             CurrentGun.bulletDamage = 5.0f;
             CurrentGun.maxAmmo = 30;
-            CurrentGun.reloadTime = 1.5f;
+            CurrentGun.reloadTime = 2.0f;
         }
     }
 
@@ -82,11 +86,26 @@ public class GunControl : MonoBehaviour
             EquipGun(sniperRifle);
 
             CurrentGun.gunName = "SniperRifle";
-            CurrentGun.shootCooldown = 1.5f;
+            CurrentGun.shootCooldown = 2.0f;
             CurrentGun.bulletSpeed = 25.0f;
             CurrentGun.bulletDamage = 25.0f;
             CurrentGun.maxAmmo = 10;
-            CurrentGun.reloadTime = 2.0f;
+            CurrentGun.reloadTime = 2.5f;
+        }
+    }
+
+    public void ShotGun()
+    {
+        if (shotGun)
+        {
+            EquipGun(shotGun);
+
+            CurrentGun.gunName = "Shotgun";
+            CurrentGun.shootCooldown = 1.0f;
+            CurrentGun.bulletSpeed = 25.0f;
+            CurrentGun.bulletDamage = 3.0f;
+            CurrentGun.maxAmmo = 6;
+            CurrentGun.reloadTime = 0.75f;
         }
     }
 
@@ -98,11 +117,15 @@ public class GunControl : MonoBehaviour
         }
         else if (CurrentGun.gunName.Equals("AssaultRifle"))
         {
-            CurrentGun.bulletDamage += 5.0f;
+            CurrentGun.bulletDamage += 3.0f;
         }
         else if (CurrentGun.gunName.Equals("SniperRifle"))
         {
             CurrentGun.bulletDamage += 5.0f;
+        }
+        else if (CurrentGun.gunName.Equals("Shotgun"))
+        {
+            CurrentGun.bulletDamage += 1.0f;
         }
     }
 
@@ -117,6 +140,10 @@ public class GunControl : MonoBehaviour
             CurrentGun.shootCooldown -= 0.02f;
         }
         else if (CurrentGun.gunName.Equals("SniperRifle"))
+        {
+            CurrentGun.shootCooldown -= 0.1f;
+        }
+        else if (CurrentGun.gunName.Equals("Shotgun"))
         {
             CurrentGun.shootCooldown -= 0.1f;
         }

@@ -11,9 +11,12 @@ public class UIControl : MonoBehaviour
     private GameObject stageController;
 
     [Header("Panel")]
+    public GameObject statePanel;
     public GameObject shopPanel;
     public GameObject startPanel;
     public GameObject endPanel;
+    public GameObject selectPanel;
+    public GameObject ammoPanel;
 
     [Header("Weapon Image")]
     public Image weaponImage;
@@ -44,6 +47,8 @@ public class UIControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Time.timeScale = 0.0f;
+
         player = GameObject.FindGameObjectWithTag("Player");
         player.GetComponent<ItemControl>().SelectFinished += StartStage;
         player.GetComponent<ItemControl>().Reinforced += UpdateGunStat;
@@ -52,17 +57,18 @@ public class UIControl : MonoBehaviour
         stageController = GameObject.FindGameObjectWithTag("StageController");
         stageController.GetComponent<StageControl>().StageEnd += EndStage;
 
+        statePanel.SetActive(false);
         startPanel.SetActive(false);
         endPanel.SetActive(false);
+        ammoPanel.SetActive(false);
 
-        FirstUpdate();
         TurnOffUI();
         StartCoroutine(InformStage());
     }
 
     private void Update()
     {
-        if (player != null)
+        if (player != null && player.GetComponent<GunControl>().CurrentGun != null)
         {
             moneyText.text = player.GetComponent<Player>().money.ToString();
             currentHealthText.text = player.GetComponent<Player>().health.ToString();
@@ -76,9 +82,12 @@ public class UIControl : MonoBehaviour
         }
     }
 
-    void FirstUpdate() // 텍스트 초기화
+    void FirstUpdate() // 초기화
     {
         UpdateGunStat();
+        selectPanel.SetActive(false);
+        statePanel.SetActive(true);
+        ammoPanel.SetActive(true);
         stageText_1.text = string.Format($"스테이지 {stageController.GetComponent<StageControl>().currentStage}");
     }
 
@@ -140,6 +149,27 @@ public class UIControl : MonoBehaviour
 
         damageMoneyText.text = string.Format($"${player.GetComponent<ItemControl>().damageMoney}");
         rpmMoneyText.text = string.Format($"${player.GetComponent<ItemControl>().rpmMoney}");
+    }
+
+    public void SelectAR()
+    {
+        player.GetComponent<GunControl>().AssaultRifle();
+        FirstUpdate();
+        Time.timeScale = 1.0f;
+    }
+
+    public void SelectShotgun()
+    {
+        player.GetComponent<GunControl>().ShotGun();
+        FirstUpdate();
+        Time.timeScale = 1.0f;
+    }
+
+    public void SelectSR()
+    {
+        player.GetComponent<GunControl>().SniperRifle();
+        FirstUpdate();
+        Time.timeScale = 1.0f;
     }
 
     public void GameEnd()

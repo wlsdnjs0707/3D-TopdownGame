@@ -8,6 +8,8 @@ TagManager:
   - StageController
   - ShopPanel
   - Money
+  - AvatarMesh
+  - Muzzle
   layers:
   - Default
   - TransparentFX

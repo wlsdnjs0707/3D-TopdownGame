@@ -19,6 +19,8 @@ public class Player : MonoBehaviour, IDamageable
     [HideInInspector] public int score = 0;
     [HideInInspector] public bool isReloading = false;
 
+    [HideInInspector] public Vector3 mousePoint;
+
     public Transform canvas; // UI (캔버스)
     private Slider healthBar; // 체력바 (슬라이더)
     private Camera cam; // 메인 카메라
@@ -47,7 +49,7 @@ public class Player : MonoBehaviour, IDamageable
         rb.MovePosition(rb.position + playerSpeed * Time.fixedDeltaTime * newPlayerInput.normalized);
 
         // 마우스 방향 바라보기
-        Vector3 mousePoint = GetLookAtPoint();
+        mousePoint = GetLookAtPoint();
         transform.LookAt(new Vector3(mousePoint.x, transform.position.y, mousePoint.z));
 
         // 발사

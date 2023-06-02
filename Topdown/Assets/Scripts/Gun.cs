@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    public Transform muzzle;
+    private GameObject muzzle;
     public Bullet bullet;
     [HideInInspector] public string gunName;
     [HideInInspector] public float shootCooldown = 0.0f;
@@ -26,6 +26,7 @@ public class Gun : MonoBehaviour
     {
         currentAmmo = maxAmmo;
         reload = ShotgunReload();
+        muzzle = GameObject.FindGameObjectWithTag("Muzzle");
     }
 
     public void Shoot()
@@ -36,7 +37,7 @@ public class Gun : MonoBehaviour
 
             // shootCooldown만큼 기다린 뒤 발사
             nextShootTime = Time.time + shootCooldown;
-            Bullet newBullet = Instantiate(bullet, muzzle.position, muzzle.rotation) as Bullet;
+            Bullet newBullet = Instantiate(bullet, muzzle.transform.position, muzzle.transform.rotation) as Bullet;
             newBullet.SetSpeed(bulletSpeed);
             newBullet.SetDamage(bulletDamage);
         }
@@ -61,9 +62,9 @@ public class Gun : MonoBehaviour
             {
                 float index = (i-1)*5;
 
-                Vector3 rot = new(muzzle.rotation.eulerAngles.x, muzzle.rotation.eulerAngles.y + index, muzzle.rotation.eulerAngles.z);
+                Vector3 rot = new(muzzle.transform.rotation.eulerAngles.x, muzzle.transform.rotation.eulerAngles.y + index, muzzle.transform.rotation.eulerAngles.z);
 
-                Bullet newBullet = Instantiate(bullet, muzzle.position, Quaternion.Euler(rot)) as Bullet;
+                Bullet newBullet = Instantiate(bullet, muzzle.transform.position, Quaternion.Euler(rot)) as Bullet;
                 newBullet.SetSpeed(bulletSpeed);
                 newBullet.SetDamage(bulletDamage);
             }

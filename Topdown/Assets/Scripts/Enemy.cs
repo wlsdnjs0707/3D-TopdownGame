@@ -99,7 +99,7 @@ public class Enemy : MonoBehaviour, IDamageable
 
             float interpolation = (-Mathf.Pow(percent, 2) + percent) * 4;
 
-            transform.position = Vector3.Lerp(originalPosition, targetPosition, interpolation);
+            transform.position = Vector3.Lerp(originalPosition, new Vector3(targetPosition.x, originalPosition.y, targetPosition.z), interpolation);
 
             yield return null;
         }

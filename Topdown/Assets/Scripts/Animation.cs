@@ -51,9 +51,9 @@ public class Animation : MonoBehaviour
         {
             animator.SetBool("IsWalking", true);
 
-            if ((mp.x >= Screen.width * 2 / 5 && mp.x <= Screen.width * 3 / 5) || (mp.y >= Screen.height * 2 / 5 && mp.y <= Screen.height * 3 / 5)) // 위 아래 좌 우
+            if ((mp.x >= Screen.width * 1 / 5 && mp.x <= Screen.width * 4 / 5) || (mp.y >= Screen.height * 1 / 5 && mp.y <= Screen.height * 4 / 5)) // 위 아래 좌 우
             {
-                if (mp.x >= Screen.width * 2 / 5 && mp.x <= Screen.width * 3 / 5)
+                if (mp.x >= Screen.width * 1 / 5 && mp.x <= Screen.width * 4 / 5)
                 {
                     if (mp.y > Screen.height / 2)
                     {
@@ -64,7 +64,7 @@ public class Animation : MonoBehaviour
                         index = SetAnimation()-5;
                     }
                 }
-                else if((mp.y >= Screen.height * 2 / 5 && mp.y <= Screen.height * 3 / 5))
+                else if((mp.y >= Screen.height * 1 / 5 && mp.y <= Screen.height * 4 / 5))
                 {
                     if (mp.x > Screen.width / 2)
                     {

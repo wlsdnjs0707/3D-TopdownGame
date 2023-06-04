@@ -16,6 +16,8 @@ public class Enemy : MonoBehaviour, IDamageable
     private GameObject target; // 추적할 플레이어 오브젝트
     private Camera cam; // 메인 카메라
 
+    private Animator animator;
+
     public GameObject money;
     public GameObject healpack;
 
@@ -42,6 +44,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
     void Start()
     {
+        animator = transform.Find("Zombie").gameObject.GetComponent<Animator>();
+
         maxHealth = health;
         navMeshAgent = GetComponent<NavMeshAgent>();
 
@@ -61,16 +65,30 @@ public class Enemy : MonoBehaviour, IDamageable
 
     void Update()
     {
+        if (currentState == State.Track)
+        {
+            animator.SetBool("IsWalking", true);
+        }
+        else if(currentState == State.Attack)
+        {
+            animator.SetBool("IsWalking", false);
+            animator.SetTrigger("Attack");
+        }
+
         // 체력바가 항상 카메라를 향하게
         canvas.transform.LookAt(transform.position + cam.transform.rotation * Vector3.forward, cam.transform.rotation * Vector3.up);
 
-        // 공격 쿨다운이 끝났는지, 공격 사거리 안에 들어왔는지 체크 (제곱근 연산이 필요한 Distance 함수 대신 제곱한 값을 사용)
-        if (!isPlayerDead && Time.time > nextAttackTime)
+
+        if (!isDead)
         {
-            if ((target.transform.position - transform.position).sqrMagnitude < Mathf.Pow(attackRange + collistionDistance, 2))
+            // 공격 쿨다운이 끝났는지, 공격 사거리 안에 들어왔는지 체크 (제곱근 연산이 필요한 Distance 함수 대신 제곱한 값을 사용)
+            if (!isPlayerDead && Time.time > nextAttackTime)
             {
-                nextAttackTime = Time.time + attackCooldown;
-                StartCoroutine(Attack());
+                if ((target.transform.position - transform.position).sqrMagnitude < Mathf.Pow(attackRange + collistionDistance, 2))
+                {
+                    nextAttackTime = Time.time + attackCooldown;
+                    StartCoroutine(Attack());
+                }
             }
         }
     }
@@ -145,6 +163,8 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         isDead = true;
 
+        navMeshAgent.ResetPath();
+
         Instantiate(money, new Vector3(transform.position.x, 3, transform.position.z), Quaternion.identity); // Money 생성
 
         target.GetComponent<Player>().score += 100;
@@ -154,9 +174,11 @@ public class Enemy : MonoBehaviour, IDamageable
             Instantiate(healpack, new Vector3(transform.position.x, 3, transform.position.z), Quaternion.identity);
         }
 
-        EnemyDead?.Invoke(); // 대리자 호출 간소화
+        animator.SetTrigger("Dead");
 
-        GameObject.Destroy(gameObject);
+        GameObject.Destroy(gameObject, 1f);
+
+        EnemyDead?.Invoke(); // 대리자 호출 간소화
     }
 
     bool GetRandom(int percent)

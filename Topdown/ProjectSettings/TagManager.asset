@@ -10,6 +10,7 @@ TagManager:
   - Money
   - AvatarMesh
   - Muzzle
+  - ZombieMesh
   layers:
   - Default
   - TransparentFX

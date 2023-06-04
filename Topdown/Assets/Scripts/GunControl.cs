@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class GunControl : MonoBehaviour
 {
-    public Transform gunHandle; // 총을 장착할 위치
+    [Header("Gun Handle")]
+    public Transform arGunHandle;
+    public Transform shotgunHandle;
+    public Transform srGunHandle;
+
+    private Transform gunHandle; // 총을 장착할 위치
+
     [HideInInspector] public Gun CurrentGun; // 장착한 총
 
-    public Gun testGun;
+    [Header("Guns")]
     public Gun assaultRifle;
     public Gun sniperRifle;
     public Gun shotGun;
@@ -49,25 +55,12 @@ public class GunControl : MonoBehaviour
         }
     }
 
-    public void TestGun()
-    {
-        if (testGun)
-        {
-            EquipGun(testGun);
-
-            CurrentGun.gunName = "TestGun";
-            CurrentGun.shootCooldown = 0.75f;
-            CurrentGun.bulletSpeed = 10.0f;
-            CurrentGun.bulletDamage = 10.0f;
-            CurrentGun.maxAmmo = 10;
-            CurrentGun.reloadTime = 1.0f;
-        }
-    }
-
     public void AssaultRifle()
     {
         if (assaultRifle)
         {
+            gunHandle = arGunHandle;
+
             EquipGun(assaultRifle);
 
             CurrentGun.gunName = "AssaultRifle";
@@ -83,6 +76,8 @@ public class GunControl : MonoBehaviour
     {
         if (sniperRifle)
         {
+            gunHandle = srGunHandle;
+
             EquipGun(sniperRifle);
 
             CurrentGun.gunName = "SniperRifle";
@@ -98,6 +93,8 @@ public class GunControl : MonoBehaviour
     {
         if (shotGun)
         {
+            gunHandle = shotgunHandle;
+
             EquipGun(shotGun);
 
             CurrentGun.gunName = "Shotgun";
